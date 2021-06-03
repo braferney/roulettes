@@ -34,6 +34,7 @@ public class usuarioControllerApuesta {
         String color = usuario.getColor();
         if (amount<=10000){
             if (color.equals("Rojo") || color.equals("Negro")){
+                //usuario.setNumber(40);
                 usuarioServiceApuesta.guardarUsuario(usuario);    
                 return "Apuesta al color "+color;   
             }else {
@@ -90,10 +91,39 @@ public class usuarioControllerApuesta {
     @GetMapping(path = "/close/{idR}")
     public String winnerBet(@PathVariable("idR") Long idR) {
         ArrayList<usuarioApuesta> usuario;
+        usuarioApuesta winner;
         usuario = usuarioServiceApuesta.obtenerPorIdR(idR);
-        Integer zx=usuario.size();
-        Double aux= Math.random();
-        return "algo"+zx;
+        Random rnd = new Random();
+        Integer random= rnd.nextInt(19)*2;
+        String iscolor;
+        if (random%2==0){
+             iscolor= "Rojo";
+        }else {
+            iscolor ="Negro";
+        }
+        
+        usuario=usuarioServiceApuesta.searchWinnerColor(iscolor);
+        winner = usuarioServiceApuesta.searchWinner(random);
+        Integer amount = winner.getAmount();
+        
+        Long idUser = winner.getIdUser();
+        String color = winner.getColor();
+        
+        //Integer number=winner.getNumber();
+        
+        //return "algo";
+        if (color.equals("null")){
+            Integer ganate = amount*4;
+            return  random+" El usuario con id "+idUser+" ha ganado "+ganate+ " por su apuesta por numero";
+        }else {
+            Float ganate = amount*1.8f;
+            if (random%2==0){
+
+                return "El usuario con id "+idUser+"ha ganado "+ganate+" por su apuesta por color "+color;
+            }else{
+                return "El usuario con id "+idUser+"ha ganado "+ganate+" por su apuesta por color "+color;
+            } 
+        }
     }
 }
 
