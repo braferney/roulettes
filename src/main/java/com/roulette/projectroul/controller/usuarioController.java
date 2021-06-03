@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/roulettes")
 public class usuarioController {
-    boolean aux;
     @Autowired
     usuarioService usuarioService;
 
