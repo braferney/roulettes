@@ -18,11 +18,10 @@ public class users {
         this.idUser = idUser;
     }
     public Integer getCredits() {
-        
+
         return credits;
     }
     public void setCredits(Integer credits) {
         this.credits = credits;
-    } 
-    
+    }   
 }
