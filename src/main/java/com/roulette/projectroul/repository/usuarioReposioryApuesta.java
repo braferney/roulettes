@@ -10,5 +10,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface usuarioReposioryApuesta extends CrudRepository <usuarioApuesta,Long> {
     public abstract ArrayList<usuarioApuesta> findByidR(Long idR);
-    public abstract Integer findByAmount(Integer amount);
+    public abstract usuarioApuesta findByNumber (Integer number);
+    public abstract ArrayList<usuarioApuesta> findByColor (String color);
 }

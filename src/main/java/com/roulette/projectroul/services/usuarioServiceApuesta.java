@@ -39,12 +39,15 @@ public class usuarioServiceApuesta {
         }
     }
 
-    public boolean acceptBet (Integer amount){
-        Integer x= usuarioReposioryApuesta.findByAmount(amount);
-        if (x<=10000){
-            return true;
-        }else {
-            return false;
-        }
+    public usuarioApuesta searchWinner (Integer number){
+            return usuarioReposioryApuesta.findByNumber(number);
     }
+
+    public ArrayList<usuarioApuesta> searchWinnerColor (String color){
+        return usuarioReposioryApuesta.findByColor(color);
+    }
+
+    /*public usuarioApuesta filterByColor(ArrayList<usuarioApuesta> usuario){
+        return usuarioReposioryApuesta.findByColor(color);
+    }*/
 }

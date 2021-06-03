@@ -2,6 +2,7 @@ package com.roulette.projectroul.controller;
 
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.Random;
 
 import com.roulette.projectroul.model.usuarioApuesta;
 import com.roulette.projectroul.services.usuarioServiceApuesta;
@@ -27,24 +28,45 @@ public class usuarioControllerApuesta {
         return usuarioServiceApuesta.obtenerUsuarios();
     }
 
-    @PostMapping
-    public usuarioApuesta guardarUsuario(@RequestBody usuarioApuesta usuario){
+    @PostMapping ("/color")
+    public String apuestaColor(@RequestBody usuarioApuesta usuario){
         Integer amount=usuario.getAmount();
-        Integer number =usuario.getNumber();
         String color = usuario.getColor();
         if (amount<=10000){
-            if(0<=number && number<=36){
-                return this.usuarioServiceApuesta.guardarUsuario(usuario);
-            }else if (color=="Rojo" || color=="Negro"){
-                return this.usuarioServiceApuesta.guardarUsuario(usuario);
+            if (color.equals("Rojo") || color.equals("Negro")){
+                //usuario.setNumber(40);
+                usuarioServiceApuesta.guardarUsuario(usuario);    
+                return "Apuesta al color "+color;   
             }else {
-                return null;
-            }
-        }else  {
-            return null;
-        }
-        
+                return "Solo se puede ingresar el color Negro o Rojo";
+            }        
+        }  else {
+            return "El monto maximo de apuesta es $10.000";
+        }        
     }
+    @PostMapping ("/number")
+    public String apuestaNumber(@RequestBody usuarioApuesta usuario){
+        Integer amount=usuario.getAmount();
+        Integer number =usuario.getNumber();
+        if (amount<=10000){
+            if (number>=0 && number<=36){
+                if(number%2==0){
+                    usuario.setColor("Rojo");
+                    usuarioServiceApuesta.guardarUsuario(usuario);
+                    return "Apuesta al numero "+number + " color Rojo";
+                }else{
+                    usuario.setColor("Negro");
+                    usuarioServiceApuesta.guardarUsuario(usuario);
+                    return "Apuesta al numero "+number +" color Negro";
+                }
+            }else{
+                return "Los numeros disponibles de apuesta son los numeros entre 0 y 36";
+            }
+        }else{
+            return "El monto maximo de apuesta es $10.000";
+        }
+    }
+    
 
     @GetMapping(path = "/{id}")
     public Optional<usuarioApuesta> obtenerUsuarioPorid(@PathVariable ("id") Long id){
@@ -66,22 +88,42 @@ public class usuarioControllerApuesta {
         }
     }
 
-    /*@GetMapping(value="/start")
-    public SomeData getMethodName(@RequestParam String param) {
-        return new SomeData();
+    @GetMapping(path = "/close/{idR}")
+    public String winnerBet(@PathVariable("idR") Long idR) {
+        ArrayList<usuarioApuesta> usuario;
+        usuarioApuesta winner;
+        usuario = usuarioServiceApuesta.obtenerPorIdR(idR);
+        Random rnd = new Random();
+        Integer random= rnd.nextInt(19)*2;
+        String iscolor;
+        if (random%2==0){
+             iscolor= "Rojo";
+        }else {
+            iscolor ="Negro";
+        }
+        
+        usuario=usuarioServiceApuesta.searchWinnerColor(iscolor);
+        winner = usuarioServiceApuesta.searchWinner(random);
+        Integer amount = winner.getAmount();
+        
+        Long idUser = winner.getIdUser();
+        String color = winner.getColor();
+        
+        //Integer number=winner.getNumber();
+        
+        //return "algo";
+        if (color.equals("null")){
+            Integer ganate = amount*4;
+            return  random+" El usuario con id "+idUser+" ha ganado "+ganate+ " por su apuesta por numero";
+        }else {
+            Float ganate = amount*1.8f;
+            if (random%2==0){
+
+                return "El usuario con id "+idUser+"ha ganado "+ganate+" por su apuesta por color "+color;
+            }else{
+                return "El usuario con id "+idUser+"ha ganado "+ganate+" por su apuesta por color "+color;
+            } 
+        }
     }
-    
-    /*    @GetMapping (path="/start")
-        public String acceptedBet (Integer amount){
-        Boolean x= usuarioServiceApuesta.acceptBet(amount);
-        if (x==true){
-            return "Apuesta con monto" + amount;
-            }else {
-            return null;
-        }
-        }
-        */
-
-
 }
 
